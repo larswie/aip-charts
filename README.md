@@ -9,5 +9,7 @@ Usage:
 Run the script without any arguments to download all charts.
 
 To download only the charts of a specific aerodrome add the ICAO code as an argument.
+
 Example: "python aip-charts.py EDFE" 
+
 This will only download the charts of Egelsbach.
