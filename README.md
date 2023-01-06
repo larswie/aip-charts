@@ -12,4 +12,6 @@ To download only the charts of a specific aerodrome add the ICAO code as an argu
 
 Example: "python aip-charts.py EDFE" 
 
-This will only download the charts of Egelsbach.
+This will only download the charts of Egelsbach. You can also specifi multiple aerodromes seperated by spaces.
+
+Example: "python aip-charts.py EDFE EDFV" 
