@@ -3,17 +3,22 @@ from bs4 import BeautifulSoup
 import requests
 import os
 import platform
+import sys
 
-def create_dir(ad_url):
+def get_icao(ad_url):
     html_text = requests.get(ad_url).text
+    soup = BeautifulSoup(html_text, 'html.parser')    
+    icao = soup.find('div', class_='headlineText left').get_text().replace(" ", "_").rsplit('_', 1)[-1]
+
+    return(icao)
+
+def create_dir(icao):
     path = os.getcwd()
     if platform.system() == 'Windows':
         slash='\\'
     else:
         slash='/'
 
-    soup = BeautifulSoup(html_text, 'html.parser')    
-    icao = soup.find('div', class_='headlineText left').get_text().replace(" ", "_").rsplit('_', 1)[-1]
     newdir = path+slash+icao
     print(f'--------------------------------------------- {icao} ---------------------------------------------')
     print(f'Creating Directory {newdir} if necessary')
@@ -45,6 +50,12 @@ html_text = requests.get(url).text
 
 soup = BeautifulSoup(html_text, 'html.parser')
 
+icao = 'XXXX'
+if len(sys.argv) > 1:
+    search = sys.argv[1]
+else:
+    search = 'YYYY'
+
 for links in soup.find_all('a', class_='folder-link', href=True):
     if links.text[0:3].strip() != 'AD':
         # print(f'Found the URL:, {links["href"]}')
@@ -57,7 +68,15 @@ for links in soup.find_all('a', class_='folder-link', href=True):
             # print(f'https://aip.dfs.de/basicVFR/2022DEC15/{ad_links["href"]}')
             ad_url = f'https://aip.dfs.de/basicVFR/2022DEC15/{ad_links["href"]}'
 
-            icao_dir = create_dir(ad_url)
+            if search in icao and 'YYYY' not in search:
+                sys.exit()
+
+            icao = get_icao(ad_url)
+
+            if search not in icao and 'YYYY' not in search:
+                continue
+
+            icao_dir = create_dir(icao)
 
             ad_url_text = requests.get(ad_url).text
 
