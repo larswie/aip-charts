@@ -52,7 +52,10 @@ soup = BeautifulSoup(html_text, 'html.parser')
 
 icao = 'XXXX'
 if len(sys.argv) > 1:
-    search = sys.argv[1]
+    search = sys.argv
+    search.pop(0)
+    print('Searching for aerodromes:')
+    print(', '.join(search))
 else:
     search = 'YYYY'
 
@@ -68,12 +71,14 @@ for links in soup.find_all('a', class_='folder-link', href=True):
             # print(f'https://aip.dfs.de/basicVFR/2022DEC15/{ad_links["href"]}')
             ad_url = f'https://aip.dfs.de/basicVFR/2022DEC15/{ad_links["href"]}'
 
-            if search in icao and 'YYYY' not in search:
-                sys.exit()
+            if icao in search and 'YYYY' not in search:
+                search.remove(icao)
+                if len(search) < 1:
+                    sys.exit()
 
             icao = get_icao(ad_url)
 
-            if search not in icao and 'YYYY' not in search:
+            if icao not in search and 'YYYY' not in search:
                 continue
 
             icao_dir = create_dir(icao)
